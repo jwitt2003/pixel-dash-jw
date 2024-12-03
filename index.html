@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Move the Square</title>
+    <title>Maze Game</title>
     <style>
         body {
             display: flex;
@@ -11,7 +11,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background-color: #e3f2fd;
         }
         canvas {
             border: 2px solid black;
@@ -24,38 +24,105 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        const square = {
-            x: 180,
-            y: 180,
-            size: 40,
-            speed: 5
-        };
+        const square = { x: 20, y: 20, size: 40, speed: 40 };
+        let level = 0;
+
+        const mazes = [
+            [
+                [0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 0, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            ],
+            [
+                [0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 0, 0, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            ],
+            [
+                [0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 0, 0, 0, 0, 0, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            ]
+        ];
+
+        function drawMaze() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const maze = mazes[level];
+            for (let row = 0; row < maze.length; row++) {
+                for (let col = 0; col < maze[row].length; col++) {
+                    ctx.fillStyle = maze[row][col] === 1 ? 'black' : 'white';
+                    ctx.fillRect(col * square.size, row * square.size, square.size, square.size);
+                }
+            }
+        }
 
         function drawSquare() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'blue';
             ctx.fillRect(square.x, square.y, square.size, square.size);
         }
 
         function moveSquare(e) {
+            const maze = mazes[level];
+            let newX = square.x;
+            let newY = square.y;
+
             switch (e.key) {
                 case 'ArrowUp':
-                    if (square.y > 0) square.y -= square.speed;
+                    newY -= square.speed;
                     break;
                 case 'ArrowDown':
-                    if (square.y < canvas.height - square.size) square.y += square.speed;
+                    newY += square.speed;
                     break;
                 case 'ArrowLeft':
-                    if (square.x > 0) square.x -= square.speed;
+                    newX -= square.speed;
                     break;
                 case 'ArrowRight':
-                    if (square.x < canvas.width - square.size) square.x += square.speed;
+                    newX += square.speed;
                     break;
             }
+
+            const col = newX / square.size;
+            const row = newY / square.size;
+
+            if (maze[row]?.[col] === 0) {
+                square.x = newX;
+                square.y = newY;
+            }
+
+            if (row === maze.length - 1 && col === maze[0].length - 1) {
+                level++;
+                if (level >= mazes.length) {
+                    alert('Congratulations! You completed all levels!');
+                    level = 0;
+                }
+                square.x = 20;
+                square.y = 20;
+            }
+
+            drawMaze();
             drawSquare();
         }
 
         document.addEventListener('keydown', moveSquare);
+        drawMaze();
         drawSquare();
     </script>
 </body>
