@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Move the Square</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        canvas {
+            border: 2px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const square = {
+            x: 180,
+            y: 180,
+            size: 40,
+            speed: 5
+        };
+
+        function drawSquare() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(square.x, square.y, square.size, square.size);
+        }
+
+        function moveSquare(e) {
+            switch (e.key) {
+                case 'ArrowUp':
+                    if (square.y > 0) square.y -= square.speed;
+                    break;
+                case 'ArrowDown':
+                    if (square.y < canvas.height - square.size) square.y += square.speed;
+                    break;
+                case 'ArrowLeft':
+                    if (square.x > 0) square.x -= square.speed;
+                    break;
+                case 'ArrowRight':
+                    if (square.x < canvas.width - square.size) square.x += square.speed;
+                    break;
+            }
+            drawSquare();
+        }
+
+        document.addEventListener('keydown', moveSquare);
+        drawSquare();
+    </script>
+</body>
+</html>
